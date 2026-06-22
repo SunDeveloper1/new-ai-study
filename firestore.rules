@@ -1,0 +1,99 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net - Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Standard Reusable Primitives & Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isOwner(workspaceId) {
+      return isSignedIn() && get(/databases/$(database)/documents/workspaces/$(workspaceId)).data.ownerId == request.auth.uid;
+    }
+
+    // Entity validation functions
+    function isValidWorkspace(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 150 &&
+             data.markdownText is string && data.markdownText.size() <= 100000 &&
+             data.ownerId is string && data.ownerId == request.auth.uid;
+    }
+
+    function isValidSlide(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.workspaceId is string && data.workspaceId.size() <= 128 &&
+             data.slideNumber is int && data.slideNumber >= 1 && data.slideNumber <= 500 &&
+             data.markdownContent is string && data.markdownContent.size() <= 10000 &&
+             data.get('audioUrl', '') is string && data.get('audioUrl', '').size() <= 2048;
+    }
+
+    // 1. Workspaces Rules
+    match /workspaces/{workspaceId} {
+      // Secure list query - never rely on client filtering, verify ownerId directly
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow get: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+
+      allow create: if isSignedIn() &&
+                    isValidId(workspaceId) &&
+                    isValidWorkspace(incoming()) &&
+                    incoming().createdAt == request.time &&
+                    incoming().updatedAt == request.time &&
+                    incoming().id == workspaceId;
+
+      allow update: if isSignedIn() &&
+                    isValidId(workspaceId) &&
+                    isValidWorkspace(incoming()) &&
+                    incoming().ownerId == existing().ownerId &&
+                    incoming().createdAt == existing().createdAt &&
+                    incoming().updatedAt == request.time &&
+                    incoming().id == workspaceId;
+
+      allow delete: if isSignedIn() &&
+                    isValidId(workspaceId) &&
+                    existing().ownerId == request.auth.uid;
+
+      // 2. Slides Subcollection Rules
+      match /slides/{slideId} {
+        allow list: if isOwner(workspaceId);
+        allow get: if isOwner(workspaceId);
+
+        allow create: if isOwner(workspaceId) &&
+                      isValidId(slideId) &&
+                      isValidSlide(incoming()) &&
+                      incoming().id == slideId &&
+                      incoming().workspaceId == workspaceId;
+
+        allow update: if isOwner(workspaceId) &&
+                      isValidId(slideId) &&
+                      isValidSlide(incoming()) &&
+                      incoming().id == slideId &&
+                      incoming().workspaceId == workspaceId &&
+                      incoming().workspaceId == existing().workspaceId;
+
+        allow delete: if isOwner(workspaceId) &&
+                      isValidId(slideId);
+      }
+    }
+  }
+}

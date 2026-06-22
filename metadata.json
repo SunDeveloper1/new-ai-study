@@ -1,0 +1,6 @@
+{
+  "name": "ScribeSlide AI",
+  "description": "A modern presentation suite inspired by PowerPoint. Edit slides in Markdown, preview them instantly, and generate voiceovers using high-quality Indian English Text-to-Speech.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,76 @@
+{
+  "entities": {
+    "Workspace": {
+      "title": "Workspace",
+      "description": "Represents a presentation workspace containing slides",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique ID of the workspace"
+        },
+        "name": {
+          "type": "string",
+          "description": "The custom name of the workspace"
+        },
+        "markdownText": {
+          "type": "string",
+          "description": "The complete raw markdown text for the presentation"
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "The Firebase Auth user ID of the owner"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp of workspace creation"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp of last modification"
+        }
+      },
+      "required": ["id", "name", "markdownText", "ownerId", "createdAt", "updatedAt"]
+    },
+    "Slide": {
+      "title": "Slide",
+      "description": "Represents an individual slide with markdown content and optional TTS voiceover url",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The slide ID, usually generated sequentially or as slide index"
+        },
+        "workspaceId": {
+          "type": "string",
+          "description": "The ID of the parent workspace"
+        },
+        "slideNumber": {
+          "type": "integer",
+          "description": "The sequential 1-based order index of the slide"
+        },
+        "markdownContent": {
+          "type": "string",
+          "description": "The isolated markdown content for this slide"
+        },
+        "audioUrl": {
+          "type": "string",
+          "description": "Calculated Text to Speech voiceover stream or file URL"
+        }
+      },
+      "required": ["id", "workspaceId", "slideNumber", "markdownContent"]
+    }
+  },
+  "firestore": {
+    "/workspaces/{workspaceId}": {
+      "schema": "Workspace",
+      "description": "Collection of presentation workspaces"
+    },
+    "/workspaces/{workspaceId}/slides/{slideId}": {
+      "schema": "Slide",
+      "description": "Subcollection of split slides inside a workspace"
+    }
+  }
+}

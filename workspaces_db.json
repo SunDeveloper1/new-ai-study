@@ -1,0 +1,45 @@
+{
+  "workspaces": [
+    {
+      "id": "ws_e674dp7sny",
+      "name": "My First Presentation Workspace",
+      "markdownText": "# Welcome to ScribeSlide AI\n\n- Welcome to your personal account workspace, vivek!\n- This is slides dashboard where you can edit individual presentation slides.\n- Try typing some details or pasting layout notes in the editor on the right!",
+      "ownerId": "user_67h992ppuj",
+      "createdAt": "2026-06-22T17:01:24.131Z",
+      "updatedAt": "2026-06-22T18:03:54.915Z"
+    }
+  ],
+  "slides": {
+    "ws_e674dp7sny": [
+      {
+        "id": "slide_1",
+        "workspaceId": "ws_e674dp7sny",
+        "slideNumber": 1,
+        "markdownContent": "# Welcome to ScribeSlide AI\n\n- Welcome to your personal account workspace, vivek!\n- This is slides dashboard where you can edit individual presentation slides.\n- Try typing some details or pasting layout notes in the editor on the right!",
+        "audioUrl": "",
+        "activeEditor": "MARKDOWN"
+      },
+      {
+        "id": "slide_2",
+        "workspaceId": "ws_e674dp7sny",
+        "slideNumber": 2,
+        "markdownContent": "## Real-Time Navigation\n\n- Re-arrange, visual select, and review slides seamlessly on the left.\n- Standard custom grid display allows easy list management.\n- Use **New Slide** or **Delete Slide** to control slide stacks.",
+        "audioUrl": ""
+      },
+      {
+        "id": "slide_3",
+        "workspaceId": "ws_e674dp7sny",
+        "slideNumber": 3,
+        "markdownContent": "## Multi-Format Uploads & Images\n\n- Copy/Paste or Drag & Drop images directly into the Markdown Editor!\n- Embedded Base64 raw graphics are saved effortlessly in real-time.\n- Clean markdown visual assets rendered instantaneously in preview.",
+        "audioUrl": ""
+      }
+    ]
+  },
+  "users": [
+    {
+      "id": "user_67h992ppuj",
+      "username": "vivek",
+      "pin": "0000"
+    }
+  ]
+}
