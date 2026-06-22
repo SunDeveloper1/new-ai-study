@@ -358,12 +358,12 @@ async function initPgTables() {
   }
 }
 
-async function startServer() {
-  // Ensure tables exist on server boot
-  await initPgTables();
+// Ensure tables exist on server boot in Postgres mode
+initPgTables().catch((err) => {
+  console.error("Postgres table initialization failed:", err);
+});
 
-  const app = express();
-  const PORT = 3000;
+export const app = express();
 
   app.use(express.json());
 
@@ -803,24 +803,27 @@ Respond with a valid JSON array of objects conforming to this schema:
     }
   });
 
-  // Serve Vite or static public client bundle
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
+  // Serve Vite or static public client bundle and start listening (only if not running on Vercel)
+  if (process.env.VERCEL !== "1") {
+    const PORT = process.env.PORT || 3000;
+    if (process.env.NODE_ENV !== "production") {
+      createViteServer({
+        server: { middlewareMode: true },
+        appType: "spa",
+      }).then((vite) => {
+        app.use(vite.middlewares);
+        app.listen(PORT, "0.0.0.0", () => {
+          console.log(`Server ScribeSlide AI active on local port: ${PORT}`);
+        });
+      });
+    } else {
+      const distPath = path.join(process.cwd(), "dist");
+      app.use(express.static(distPath));
+      app.get("*", (req, res) => {
+        res.sendFile(path.join(distPath, "index.html"));
+      });
+      app.listen(PORT, "0.0.0.0", () => {
+        console.log(`Server ScribeSlide AI active on local port: ${PORT}`);
+      });
+    }
   }
-
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server ScribeSlide AI active on local port: ${PORT}`);
-  });
-}
-
-startServer();
