@@ -805,7 +805,7 @@ Respond with a valid JSON array of objects conforming to this schema:
 
   // Serve Vite or static public client bundle and start listening (only if not running on Vercel)
   if (process.env.VERCEL !== "1") {
-    const PORT = process.env.PORT || 3000;
+    const PORT = Number(process.env.PORT) || 3000;
     if (process.env.NODE_ENV !== "production") {
       createViteServer({
         server: { middlewareMode: true },
