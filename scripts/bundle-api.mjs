@@ -3,7 +3,7 @@ import { unlinkSync } from "fs";
 
 try {
   await esbuild.build({
-    entryPoints: ["api/index.ts"],
+  entryPoints: ["./api/index.ts"],
     bundle: true,
     platform: "node",
     format: "esm",
