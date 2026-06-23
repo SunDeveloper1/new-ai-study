@@ -8,7 +8,9 @@ import fs from "fs";
 import pg from "pg";
 import { GoogleGenAI, Type } from "@google/genai";
 
-const DB_FILE = path.join(process.cwd(), "workspaces_db.json");
+const DB_FILE = process.env.VERCEL === "1"
+  ? "/tmp/workspaces_db.json"
+  : path.join(process.cwd(), "workspaces_db.json");
 
 // Parse DB_VENDOR robustly (case-insensitive, trimmed, defaults to FIREBASE)
 const rawVendor = (process.env.DB_VENDOR || "FIREBASE").trim().toUpperCase();
